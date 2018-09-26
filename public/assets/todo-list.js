@@ -15,7 +15,6 @@ $(document).ready(function(){
       });
 
       return false;
-
   });
 
   $('li').on('click', function(){
