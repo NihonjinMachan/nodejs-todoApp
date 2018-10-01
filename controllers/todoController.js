@@ -5,7 +5,8 @@ mongoose.connect('mongodb://localhost:27017/todo', {useNewUrlParser:true});
 
 //mongodb todo schema
 var todoSchema = new mongoose.Schema({
-    act: String
+    act: String,
+    time: {type: Date, default: Date.now}
 });
 
 //mongodb user schema
@@ -18,7 +19,7 @@ var userSchema = new mongoose.Schema({
 var TodoModel = mongoose.model('todo-app', todoSchema);
 
 //mongodb user model
-var UserModel = mongoose.model('users', userSchema);
+var UserModel = mongoose.model('user', userSchema);
 
 module.exports = function(app){
 

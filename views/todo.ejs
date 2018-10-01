@@ -25,7 +25,7 @@
         </form>
         <ul>
             <% data.forEach((item)=>{ %>
-                <li><%= item.act %></li>
+                <li><span style="color: teal;"><%= item.act %></span>[to be done at <%= item.time %>]</li>
             <% }); %>
         </ul>
     </div>
