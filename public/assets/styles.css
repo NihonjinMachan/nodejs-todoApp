@@ -20,14 +20,20 @@ body{
     clear: both;
 }
 
-.appInput input[type="text"]{
-    width: 77%;
-    padding: 20px;
+.appInput input{
+    display: block;
+    width: 50%;
+    padding: 20px 20px 20px 20px;
+    margin: 10px 0px 10px 0px;
     background:#181c22;
     border: 0;
-    float: left;
     font-size: 20px;
     color: #989898;
+}
+
+.appInput label{
+    font-size: 1.25em;
+    font-family: tahoma; 
 }
 
 .appInput button{
