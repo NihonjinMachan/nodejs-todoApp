@@ -21,6 +21,10 @@ var TodoModel = mongoose.model('todo-app', todoSchema);
 //mongodb user model
 var UserModel = mongoose.model('user', userSchema);
 
+//checks to prevent same user being saved to dB multiple times 
+var userName = "";
+var email = "";
+
 module.exports = function(app){
 
     //open main page
@@ -28,24 +32,31 @@ module.exports = function(app){
         res.sendFile('/public/index.html');
     });
         
-    //get all reminders OR insert new documents into datatbase
+    //insert new user into users collection and retrieve all reminders
     app.post('/todo', (req,res)=>{
-        if(req.body.name && req.body.email){
-            TodoModel.find({}, (err, data)=>{
-                if (err) throw err;
-                res.render('todo', {data : data});
-            });
-        }
-        else{
-            TodoModel(req.body).save((err, data)=>{
+        TodoModel.find({}, (err, data)=>{
+            if (err) throw err;
+            res.render('todo', {data : data});
+        });
+        if(userName !== req.body.name && email !== req.body.email){
+            UserModel(req.body).save((err)=>{
                 if(err) throw err;
-                res.send(data);  //note: success code block in ajax will only be executed if theres a response from server 
-            }); 
-        } 
+            });
+            userName = req.body.name;
+            email = req.body.email;
+        }
     });
 
-    //remove a document from database
-    app.delete('/todo/:act', (req,res)=>{
+    //insert reminders into todo-apps collection
+    app.post('/act', (req, res)=>{
+        TodoModel(req.body).save((err, data)=>{
+            if(err) throw err;
+            res.send(data);  //note: success code block in ajax will only be executed if theres a response from server 
+        }); 
+    });
+
+    //remove a document from todo-apps collection
+    app.delete('/act/:act', (req,res)=>{
         TodoModel.find({act: req.params.act.replace(/\-/g, " ")}).deleteOne((err, data)=>{
             if(err) throw err;
             res.send(data);

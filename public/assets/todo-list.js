@@ -11,7 +11,7 @@ $(document).ready(function(){
 
       $.ajax({
         type: 'POST',
-        url: '/todo',
+        url: '/act',
         data: todo,
         success: function(data){
           location.reload();
@@ -25,7 +25,7 @@ $(document).ready(function(){
       var act = $(this).text().split('[')[0].replace(/ /g, "-"); //g is global flag; replaces all blank spaces with -
       $.ajax({
         type: 'DELETE',
-        url: '/todo/' + act,
+        url: '/act/' + act,
         success: function(data){
           location.reload();
         }
