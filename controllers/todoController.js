@@ -43,6 +43,17 @@ module.exports = function(app){
         }); 
     });
 
+    //logout operation and database clear
+    app.get('/logout', (req, res)=>{
+        db.TodoModel.remove({}, (err)=>{
+            if(err) throw err;
+        });
+        db.UserModel.remove({}, (err)=>{
+            if(err) throw err;
+        });
+        res.send('Done');
+    });
+
     setInterval(function(){
         var time = new Date();
         db.TodoModel.find({}, (err, data)=>{

@@ -32,4 +32,14 @@ $(document).ready(function(){
       });
   });
 
+  $('button[name=logout]').on('click', function(){
+    $.ajax({
+      type: 'GET',
+      url: '/logout',
+      success: function(data){
+        location.href = '/';
+      }
+    });
+  });
+
 });

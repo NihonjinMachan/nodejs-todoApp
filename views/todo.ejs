@@ -23,6 +23,7 @@
             <input type="time" name="time" />
             <button type="submit">Add Item</button>
         </form>
+        <button class="lgButton" type="button" name="logout">Log Out</button>
         <ul>
             <% data.forEach((item)=>{ %>
                 <li><span style="color: teal;"><%= item.act %></span>[to be done at <%= item.time %>]</li>
