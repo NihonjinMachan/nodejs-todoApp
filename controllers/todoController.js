@@ -1,25 +1,5 @@
-const mongoose = require('mongoose');
-
-//mongodb connect
-mongoose.connect('mongodb://localhost:27017/todo', {useNewUrlParser:true});
-
-//mongodb todo schema
-var todoSchema = new mongoose.Schema({
-    act: String,
-    time: {type: Date, default: Date.now}
-});
-
-//mongodb user schema
-var userSchema = new mongoose.Schema({
-    name: String,
-    email: String
-});
-
-//mongodb todo model
-var TodoModel = mongoose.model('todo-app', todoSchema);
-
-//mongodb user model
-var UserModel = mongoose.model('user', userSchema);
+const db = require('./dbConnect');
+const mail = require('./mail');
 
 //checks to prevent same user being saved to dB multiple times 
 var userName = "";
@@ -34,12 +14,12 @@ module.exports = function(app){
         
     //insert new user into users collection and retrieve all reminders
     app.post('/todo', (req,res)=>{
-        TodoModel.find({}, (err, data)=>{
+        db.TodoModel.find({}, (err, data)=>{
             if (err) throw err;
             res.render('todo', {data : data});
         });
         if(userName !== req.body.name && email !== req.body.email){
-            UserModel(req.body).save((err)=>{
+            db.UserModel(req.body).save((err)=>{
                 if(err) throw err;
             });
             userName = req.body.name;
@@ -49,7 +29,7 @@ module.exports = function(app){
 
     //insert reminders into todo-apps collection
     app.post('/act', (req, res)=>{
-        TodoModel(req.body).save((err, data)=>{
+        db.TodoModel(req.body).save((err, data)=>{
             if(err) throw err;
             res.send(data);  //note: success code block in ajax will only be executed if theres a response from server 
         }); 
@@ -57,10 +37,29 @@ module.exports = function(app){
 
     //remove a document from todo-apps collection
     app.delete('/act/:act', (req,res)=>{
-        TodoModel.find({act: req.params.act.replace(/\-/g, " ")}).deleteOne((err, data)=>{
+        db.TodoModel.find({act: req.params.act.replace(/\-/g, " ")}).deleteOne((err, data)=>{
             if(err) throw err;
             res.send(data);
         }); 
     });
-    
+
+    setInterval(function(){
+        var time = new Date();
+        db.TodoModel.find({}, (err, data)=>{
+            if(err) throw err
+            if(data.length > 0){
+                data.forEach((item)=>{
+                    if(item.time.toString() === time.toString()){
+                        var mailDeets = mail.mailOptions(userName, email, item.act); //mailOptions(receiverName, receieverEmail) function in mail.js module
+                        mail.transporter.sendMail(mailDeets, (error, info) => {
+                            if (error) {
+                                return console.log(error);
+                            }
+                            console.log('Message sent: %s', info.messageId);
+                        });
+                    }
+                });
+            }
+        });
+    }, 1000);
 }
